@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function Home() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<any[]>([]); // 타입 정의 추가
   const [loading, setLoading] = useState(false);
 
   const searchBooks = async () => {
@@ -19,7 +19,8 @@ export default function Home() {
     setLoading(false);
   };
 
-  const addToNotion = async (book) => {
+  // ✅ 에러 지점: (book: any)로 타입을 명시해줍니다.
+  const addToNotion = async (book: any) => {
     const res = await fetch('/api/notion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -30,17 +31,14 @@ export default function Home() {
   };
 
   return (
-    // 배경을 노션 기본 배경색인 #FFFFFF 혹은 아주 연한 회색으로 설정
     <div className="min-h-screen bg-white p-4 md:p-8 font-sans text-[#37352F]">
       <div className="max-w-2xl mx-auto">
         
-        {/* 헤더: 폰트 크기를 줄이고 더 담백하게 */}
         <div className="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
           <span className="text-2xl">📚</span>
           <h1 className="text-xl font-semibold tracking-tight text-[#37352F]">독서 기록 도우미</h1>
         </div>
 
-        {/* 검색바: 노션의 검색창처럼 직사각형에 가까운 형태로 변경 */}
         <div className="relative mb-8">
           <input 
             value={query} 
@@ -57,9 +55,8 @@ export default function Home() {
           </button>
         </div>
 
-        {/* 검색 결과 리스트 */}
         <div className="grid gap-3">
-          {results.map((book) => (
+          {results.map((book: any) => ( // 여기서도 타입을 명시합니다.
             <div 
               key={book.isbn} 
               className="group flex gap-4 p-3 rounded-lg border border-gray-100 hover:bg-[#F7F6F3] transition-all"
@@ -73,7 +70,7 @@ export default function Home() {
                 <div>
                   <h3 className="font-semibold text-base text-[#37352F] truncate leading-tight mb-1">{book.title}</h3>
                   <p className="text-[#787774] text-xs truncate">
-                    {book.author.replace(/\s*\(.*?\)\s*/g, "")} · {book.publisher}
+                    {book.author?.replace(/\s*\(.*?\)\s*/g, "")} · {book.publisher}
                   </p>
                 </div>
                 
